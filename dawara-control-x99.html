@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم السرية - Vortexis Control</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #070d14; --card-bg: #0d1722; --card-border: #1a2938; --gold-primary: #f59e0b; --gold-bright: #fbbf24; --text-white: #ffffff; --text-gray: #94a3b8; --danger-red: #ef4444; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 650px; margin: 0 auto; }
+        .admin-dashboard { background: var(--card-bg); border: 2px solid var(--gold-primary); border-radius: 16px; padding: 18px; margin-bottom: 20px; }
+        .admin-section { background: var(--bg-dark); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.78rem; color: var(--text-gray); margin-bottom: 3px; font-weight: 700; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 6px; color: var(--text-white); box-sizing: border-box; font-family: inherit; font-size: 0.85rem; }
+        .btn-gold { width: 100%; background: var(--gold-primary); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: inherit; font-size: 0.9rem; }
+        .btn-danger { background: var(--danger-red); color: #fff; }
+        .cat-item-row { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--card-border); }
+        .back-link { display: inline-block; margin-bottom: 15px; color: var(--gold-bright); text-decoration: none; font-weight: bold; }
+        #authContainer { background: var(--card-bg); border: 2px solid var(--gold-primary); border-radius: 16px; padding: 25px; text-align: center; margin-top: 40px; }
+        #dashboardContent { display: none; }
+        .pin-box { width: 100%; letter-spacing: 12px; text-align: center; font-size: 1.5rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link"><i class="fa-solid fa-globe"></i> زيارة الواجهة الرئيسية لموقع Vortexis</a>
+
+        <div id="authContainer">
+            <h2 style="color:var(--gold-bright); margin-top:0;"><i class="fa-solid fa-shield-halved"></i> لوحة إدارة شركة Vortexis</h2>
+            <p style="color:var(--text-gray); font-size:0.85rem;">هذه المنطقة محمية بالكامل بالإدارة السريعة.</p>
+            
+            <div id="lockStep1">
+                <div class="form-group">
+                    <label>الرمز السري الخاص (Security PIN):</label>
+                    <input type="password" id="pinInput" maxlength="4" class="pin-box" placeholder="••••">
+                </div>
+                <button class="btn-gold" onclick="verifyPin()">التحقق من PIN</button>
+            </div>
+
+            <div id="lockStep2" style="display:none;">
+                <div class="form-group">
+                    <label>كلمة السر الرئيسية (Master Security Password):</label>
+                    <input type="password" id="masterPassInput" placeholder="أدخل كلمة السر الرئيسية">
+                </div>
+                <button class="btn-gold" onclick="verifyMasterPass()">فتح لوحة التحكم الكاملة</button>
+            </div>
+        </div>
+
+        <div id="dashboardContent">
+            <div class="admin-dashboard">
+                <h3 style="color:var(--gold-bright); margin-top:0;"><i class="fa-solid fa-sliders"></i> التحكم والبرمجة الشاملة - Vortexis</h3>
+                
+                <div class="admin-section">
+                    <h4 style="color:var(--gold-bright);"><i class="fa-solid fa-address-book"></i> 1. أرقام ومسميات الواتساب والمسؤولين</h4>
+                    <div class="form-group"><label>رقم واتساب قسم المبيعات:</label><input type="text" id="editSalesPhone"></div>
+                    <div class="form-group"><label>مسمى واسم مسؤول المبيعات:</label><input type="text" id="editSalesManager"></div>
+                    <div class="form-group"><label>نص زر الواتساب للمنتجات (الكتالوج):</label><input type="text" id="editSalesBtnText"></div>
+                    <hr style="border:1px dashed var(--card-border); margin:10px 0;">
+                    <div class="form-group"><label>رقم واتساب قسم الاستيراد والتصدير:</label><input type="text" id="editExportPhone"></div>
+                    <div class="form-group"><label>مسمى واسم مسؤول التصدير:</label><input type="text" id="editExportManager"></div>
+                    <div class="form-group"><label>نص زر الواتساب لقسم الاستيراد والتصدير:</label><input type="text" id="editExportBtnText"></div>
+                    <button class="btn-gold" onclick="updateContactSettings()">حفظ إعدادات التواصل</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4 style="color:var(--gold-bright);"><i class="fa-solid fa-circle-plus"></i> 2. إضافة صنف / منتج جديد</h4>
+                    <div class="form-group"><label>القسم الرئيسي:</label><select id="p-target" onchange="updateProductCatDropdown(this.value)"></select></div>
+                    <div class="form-group"><label>اسم الصنف الكامل:</label><input type="text" id="p-title" placeholder="مثال: حبل نايلون مجدول ثقيل"></div>
+                    <div class="form-group" id="catSelectBoxWrapper"><label>التصنيف الفرعي:</label><select id="p-cat"></select></div>
+                    <div class="form-group"><label>المقاس / العرض:</label><input type="text" id="p-size" placeholder="مثال: 12mm"></div>
+                    <div class="form-group"><label>اللون / الخامة:</label><input type="text" id="p-color" placeholder="مثال: أبيض / أصفر"></div>
+                    <div class="form-group">
+                        <label>صورة المنتج:</label>
+                        <input type="file" accept="image/*" onchange="previewImageFile(this, 'p-media-preview')">
+                        <input type="hidden" id="p-media-base64">
+                        <img id="p-media-preview" src="" style="display:none; width:100%; height:120px; object-fit:cover; margin-top:5px; border-radius:6px;">
+                    </div>
+                    <div class="form-group"><label>الشرح والتفاصيل الكاملة:</label><textarea id="p-desc" rows="2" placeholder="المواصفات والاستخدامات..."></textarea></div>
+                    <button class="btn-gold" onclick="addNewProduct()">نشر الصنف بالموقع</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4 style="color:var(--gold-bright);"><i class="fa-solid fa-boxes-stacked"></i> 3. المنتجات القائمة (تعديل / حذف)</h4>
+                    <div id="adminProductsList"></div>
+                </div>
+
+                <div class="admin-section">
+                    <h4 style="color:var(--gold-bright);"><i class="fa-solid fa-compass"></i> 4. التحكم بالأقسام الرئيسية (Tabs)</h4>
+                    <div class="form-group"><input type="text" id="new-main-tab-name" placeholder="اسم القسم الرئيسي الجديد"></div>
+                    <div class="form-group">
+                        <label>نوع محتوى القسم:</label>
+                        <select id="new-main-tab-type">
+                            <option value="catalog">كتالوج المنتجات والجملة</option>
+                            <option value="trade">قسم الاستيراد والتصدير</option>
+                            <option value="shipping">خيارات الاستلام والشحن</option>
+                            <option value="custom">معمل ومواقع الشركة</option>
+                        </select>
+                    </div>
+                    <button class="btn-gold" onclick="addMainTab()" style="margin-bottom:10px;">إضافة قسم رئيسي للموقع</button>
+                    <div id="adminMainTabsList"></div>
+                </div>
+
+                <div class="admin-section">
+                    <h4 style="color:var(--gold-bright);"><i class="fa-solid fa-layer-group"></i> 5. أزرار التصنيفات الفرعية</h4>
+                    <div class="form-group"><input type="text" id="new-cat-name" placeholder="اسم التصنيف الفرعي الجديد"></div>
+                    <button class="btn-gold" onclick="addCategory()" style="margin-bottom:10px;">إضافة تصنيف فرعي</button>
+                    <div id="adminCatManageList"></div>
+                </div>
+
+                <div class="admin-section">
+                    <h4 style="color:var(--gold-bright);"><i class="fa-solid fa-signature"></i> 6. اسم المنشأة والشريط الإعلاني والخرائط</h4>
+                    <div class="form-group"><label>اسم الشركة الرئيسي:</label><input type="text" id="editCompanyName" value="Vortexis"></div>
+                    <div class="form-group"><label>الوصف التحتي:</label><input type="text" id="editCompanySub" value="Trading — للتجارة والاستيراد والتصدير (بإدارة أبناء الحاج محمود دوارة)"></div>
+                    <div class="form-group"><label>نص الشريط الإعلاني العلوي المتحرك:</label><input type="text" id="editAnnouncementInput" value="أهلاً بكم في Vortexis - توريد وتصدير الحبال والأنسجة والسفايف والخيوط للجملة!"></div>
+                    <button class="btn-gold" onclick="updateCompanyIdentity()" style="margin-bottom:12px;">تحديث اسم الشركة والإعلان</button>
+                    <hr style="border:1px dashed var(--card-border); margin:10px 0;">
+                    <div class="form-group"><label>رابط خريطة المعمل (Google Maps Embed):</label><input type="text" id="editFactoryMap"></div>
+                    <div class="form-group"><label>رابط خريطة المستودعات (Google Maps Embed):</label><input type="text" id="editWarehouseMap"></div>
+                    <button class="btn-gold" onclick="updateFactoryMaps()">تحديث وحفظ الخرائط</button>
+                </div>
+
+                <button class="btn-gold btn-danger" onclick="logoutAdmin()">إغلاق وقفل الإدارة</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:3000; display:none; align-items:center; justify-content:center; padding:15px;">
+        <div style="background:var(--card-bg); border:2px solid var(--gold-primary); border-radius:16px; width:100%; max-width:500px; padding:20px; box-sizing:border-box;">
+            <h3 style="color:var(--gold-bright); margin-top:0;">تعديل بيانات المنتج</h3>
+            <input type="hidden" id="m-prod-id">
+            <div class="form-group"><label>اسم الصنف:</label><input type="text" id="m-title"></div>
+            <div class="form-group"><label>المقاس:</label><input type="text" id="m-size"></div>
+            <div class="form-group"><label>اللون:</label><input type="text" id="m-color"></div>
+            <div class="form-group"><label>الشرح والتفاصيل:</label><textarea id="m-desc" rows="2"></textarea></div>
+            <button class="btn-gold" onclick="saveProductEdits()">حفظ التعديلات</button>
+            <button class="btn-gold btn-danger" style="margin-top:8px;" onclick="closeEditModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        const SECURITY_PIN = "9999"; 
+        const MASTER_PASSWORD = "AhmadD999";
+
+        let mainTabs = JSON.parse(localStorage.getItem('saved_mainTabs')) || [
+            { id: 'catalogPage', name: 'كتالوج المنتجات والجملة', type: 'catalog' },
+            { id: 'tradePage', name: 'الاستيراد والتصدير', type: 'trade' },
+            { id: 'shippingPage', name: 'خيارات الاستلام والشحن', type: 'shipping' },
+            { id: 'mapPage', name: 'مواقع المعمل والمستودعات', type: 'custom' }
+        ];
+
+        let categories = JSON.parse(localStorage.getItem('saved_categories')) || [
+            { id: 'all', name: 'الكل' }, 
+            { id: 'nylon', name: 'حبال نايلون' }, 
+            { id: 'flat', name: 'سفايف وأحزمة مسطحة' },
+            { id: 'threads', name: 'خيوط وألياف صناعيةخام' }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('saved_products')) || [
+            { id: 1, target: 'catalogPage', title: 'حبل نايلون مجدول صناعي عالي المتانة', cat: 'nylon', size: '8mm - 24mm', color: 'أصفر / أبيض', media: 'https://images.unsplash.com/photo-1605218403815-681966a3d6a0?w=600', desc: 'حبال نايلون وبولي بروبيلين متينة ومقاومة للرطوبة والأحمال الشاقة للورش والمقاولات والشحن.' },
+            { id: 2, target: 'catalogPage', title: 'سفايف وأحزمة تربيط شاحنات (Lashing Straps)', cat: 'flat', size: '35mm - 50mm - 75mm', color: 'أزرق / برتقالي', media: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600', desc: 'سفايف وأشرطة مسطحة قوية لتثبيت الحمولات والبضائع أثناء النقل البري والشحن الخارجي.' },
+            { id: 3, target: 'tradePage', title: 'خيوط وألياف صناعية خيش للتصدير والجملة', cat: 'threads', size: 'حسب طلب المعامل', color: 'خام وطبيعي', media: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600', desc: 'استيراد وتصدير ألياف وخيوط صناعية وأنسجة خام لمصانع الحبال والورش بالحاويات المباشرة.' }
+        ];
+
+        function verifyPin() {
+            let pinVal = document.getElementById('pinInput').value.trim();
+            if(pinVal === SECURITY_PIN) {
+                document.getElementById('lockStep1').style.display = 'none';
+                document.getElementById('lockStep2').style.display = 'block';
+            } else { alert('رمز الـ PIN خاطئ!'); }
+        }
+
+        function verifyMasterPass() {
+            let passVal = document.getElementById('masterPassInput').value.trim();
+            if(passVal === MASTER_PASSWORD) {
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+                initDashboardData();
+            } else { alert('كلمة السر الرئيسية خاطئة!'); }
+        }
+
+        function logoutAdmin() { location.reload(); }
+
+        function initDashboardData() {
+            document.getElementById('editSalesPhone').value = localStorage.getItem('sales_phone') || "963995869501";
+            document.getElementById('editSalesManager').value = localStorage.getItem('sales_manager') || "مدير قسم المبيعات: عبد الله دوارة";
+            document.getElementById('editSalesBtnText').value = localStorage.getItem('sales_btn_text') || "طلب وتواصل مباشر عبر الواتساب";
+            document.getElementById('editExportPhone').value = localStorage.getItem('export_phone') || "963952172658";
+            document.getElementById('editExportManager').value = localStorage.getItem('export_manager') || "مدير قسم الاستيراد والتصدير: محمد دوارة";
+            document.getElementById('editExportBtnText').value = localStorage.getItem('export_btn_text') || "طلب استفسار وتصدير";
+
+            if(localStorage.getItem('company_name')) document.getElementById('editCompanyName').value = localStorage.getItem('company_name');
+            if(localStorage.getItem('company_sub')) document.getElementById('editCompanySub').value = localStorage.getItem('company_sub');
+            if(localStorage.getItem('announcement_text')) document.getElementById('editAnnouncementInput').value = localStorage.getItem('announcement_text');
+
+            document.getElementById('editFactoryMap').value = localStorage.getItem('factory_map') || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51590.2312!2d37.1343!3d36.2021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDEyJzA3LjgiTiAzN8KwMDgnMDMuNSJF!5e0!3m2!1sar!2s!4v1650000000000";
+            document.getElementById('editWarehouseMap').value = localStorage.getItem('warehouse_map') || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26450.12!2d33.5138!3d36.2765!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDMwJzQ5LjciTiAzNsKwMTYnMzUuNCJF!5e0!3m2!1sar!2s!4v1650000000000";
+
+            renderMainTabsList();
+            renderCategoriesList();
+            renderAdminProductsList();
+        }
+
+        function renderMainTabsList() {
+            let pTargetSelect = document.getElementById('p-target');
+            let tabsListEl = document.getElementById('adminMainTabsList');
+            pTargetSelect.innerHTML = '';
+            tabsListEl.innerHTML = '';
+
+            mainTabs.forEach(t => {
+                let opt = document.createElement('option');
+                opt.value = t.id; opt.innerText = t.name;
+                pTargetSelect.appendChild(opt);
+
+                let row = document.createElement('div');
+                row.className = 'cat-item-row';
+                row.innerHTML = `<span style="font-size:0.85rem; font-weight:bold;">${t.name}</span><div>${mainTabs.length > 1 ? `<button class="btn-danger" style="border:none; padding:3px 8px; border-radius:4px; cursor:pointer;" onclick="deleteMainTab('${t.id}')">حذف</button>` : ''}</div>`;
+                tabsListEl.appendChild(row);
+            });
+            updateProductCatDropdown(mainTabs[0].id);
+        }
+
+        function renderCategoriesList() {
+            let catListEl = document.getElementById('adminCatManageList');
+            catListEl.innerHTML = '';
+            categories.forEach(c => {
+                if(c.id !== 'all') {
+                    let row = document.createElement('div');
+                    row.className = 'cat-item-row';
+                    row.innerHTML = `<span style="font-size:0.85rem; font-weight:bold;">${c.name}</span><div><button class="btn-danger" style="border:
